@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevNet Associate Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #1f6feb;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --radius: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── Header ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  .logo-icon {
+    width: 28px; height: 28px;
+    background: var(--accent2);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  .header-stats {
+    display: flex;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .stat-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stat-pill .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    margin-bottom: 24px;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Question Card ── */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    padding: 14px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .q-badge {
+    background: var(--accent2);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  .multi-badge {
+    background: var(--yellow);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+  }
+
+  .question-text {
+    padding: 20px 20px 16px;
+    font-size: 15px;
+    line-height: 1.65;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ── Options ── */
+  .options {
+    padding: 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+
+  .option:hover:not(.locked) {
+    border-color: var(--accent);
+    background: rgba(88, 166, 255, 0.06);
+  }
+
+  .option.selected:not(.locked) {
+    border-color: var(--accent);
+    background: rgba(88, 166, 255, 0.1);
+  }
+
+  .option.correct {
+    border-color: var(--green);
+    background: rgba(63, 185, 80, 0.1);
+  }
+
+  .option.wrong {
+    border-color: var(--red);
+    background: rgba(248, 81, 73, 0.1);
+  }
+
+  .option.dimmed {
+    opacity: 0.4;
+  }
+
+  .option-letter {
+    width: 24px; height: 24px;
+    min-width: 24px;
+    border-radius: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .option.selected .option-letter {
+    background: var(--accent2);
+    color: white;
+    border-color: var(--accent2);
+  }
+
+  .option.correct .option-letter {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
+
+  .option.wrong .option-letter {
+    background: var(--red);
+    color: white;
+    border-color: var(--red);
+  }
+
+  .option-text {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .option-icon {
+    margin-left: auto;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* ── Feedback ── */
+  .feedback {
+    margin: 0 20px 20px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.55;
+    display: none;
+    animation: fadeUp 0.25s ease;
+  }
+
+  .feedback.correct {
+    background: rgba(63, 185, 80, 0.1);
+    border: 1px solid rgba(63, 185, 80, 0.35);
+    color: #7ee787;
+    display: flex;
+    gap: 10px;
+  }
+
+  .feedback.wrong {
+    background: rgba(248, 81, 73, 0.08);
+    border: 1px solid rgba(248, 81, 73, 0.3);
+    color: #ff7b72;
+    display: flex;
+    gap: 10px;
+  }
+
+  .feedback-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .feedback-body { flex: 1; }
+  .feedback-label { font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+
+  .explanation {
+    margin-top: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Action buttons ── */
+  .actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+
+  .btn {
+    padding: 9px 20px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-primary {
+    background: var(--accent2);
+    color: white;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent);
+  }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  /* ── Results Screen ── */
+  #results {
+    display: none;
+    text-align: center;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .results-ring {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(var(--green) calc(var(--pct) * 1%), var(--surface2) 0%);
+    margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  .results-ring::after {
+    content: '';
+    position: absolute;
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: var(--surface);
+  }
+
+  .results-score {
+    position: relative;
+    z-index: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .results-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .results-sub {
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 28px;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .results-cell {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+
+  .results-cell-num {
+    font-size: 26px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .results-cell-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+
+  /* ── Sidebar navigation ── */
+  .quiz-layout {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .question-nav {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    position: sticky;
+    top: 70px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+  }
+
+  .nav-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+
+  .nav-dot {
+    width: 28px; height: 28px;
+    border-radius: 5px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .nav-dot:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-dot.active { border-color: var(--accent); color: var(--accent); background: rgba(88,166,255,0.1); }
+  .nav-dot.answered-correct { background: rgba(63,185,80,0.15); border-color: var(--green); color: var(--green); }
+  .nav-dot.answered-wrong { background: rgba(248,81,73,0.12); border-color: var(--red); color: var(--red); }
+  .nav-dot.skipped { background: rgba(210,153,34,0.1); border-color: var(--yellow); color: var(--yellow); }
+
+  .nav-legend {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .legend-swatch {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+  }
+
+  /* ── Mode selector ── */
+  #mode-screen {
+    max-width: 520px;
+    margin: 60px auto;
+    text-align: center;
+  }
+
+  .mode-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .mode-sub {
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 36px;
+  }
+
+  .mode-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .mode-card:hover { border-color: var(--accent); background: rgba(88,166,255,0.04); }
+  .mode-card.selected { border-color: var(--accent); background: rgba(88,166,255,0.08); }
+
+  .mode-icon { font-size: 22px; margin-bottom: 8px; }
+  .mode-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .mode-desc { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; line-height: 1.5; }
+
+  .count-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .count-label { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+  select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  select:focus { outline: none; border-color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .quiz-layout { grid-template-columns: 1fr; }
+    .question-nav { display: none; }
+    .results-grid { grid-template-columns: 1fr 1fr; }
+    .mode-cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    DevNet Quiz Trainer
+  </div>
+  <div class="header-stats" id="headerStats">
+    <div class="stat-pill">
+      <div class="dot" style="background:var(--green)"></div>
+      <span id="statCorrect">0</span> correct
+    </div>
+    <div class="stat-pill">
+      <div class="dot" style="background:var(--red)"></div>
+      <span id="statWrong">0</span> wrong
+    </div>
+    <div class="stat-pill" style="color:var(--accent)">
+      Q <span id="statCurrent">–</span> / <span id="statTotal">–</span>
+    </div>
+  </div>
+</header>
+
+<!-- Mode Selection -->
+<div class="container" id="mode-screen">
+  <div class="mode-title">DevNet Associate</div>
+  <div class="mode-sub"># version 1.0 · practice exam simulator</div>
+
+  <div class="mode-cards">
+    <div class="mode-card selected" onclick="selectMode(this,'all')">
+      <div class="mode-icon">📋</div>
+      <div class="mode-name">Full Exam</div>
+      <div class="mode-desc">All questions in order — simulate the real exam experience</div>
+    </div>
+    <div class="mode-card" onclick="selectMode(this,'random')">
+      <div class="mode-icon">🎲</div>
+      <div class="mode-name">Random</div>
+      <div class="mode-desc">Questions shuffled randomly to keep you on your toes</div>
+    </div>
+    <div class="mode-card" onclick="selectMode(this,'missed')">
+      <div class="mode-icon">🔁</div>
+      <div class="mode-name">Missed Only</div>
+      <div class="mode-desc">Drill only the questions you got wrong</div>
+    </div>
+    <div class="mode-card" onclick="selectMode(this,'timed')">
+      <div class="mode-icon">⏱</div>
+      <div class="mode-name">Timed Mode</div>
+      <div class="mode-desc">90 min timer to match real exam pressure</div>
+    </div>
+  </div>
+
+  <div class="count-selector">
+    <div class="count-label">Questions per session:</div>
+    <select id="qCount">
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="30">30</option>
+      <option value="50">50</option>
+      <option value="all" selected>All</option>
+    </select>
+  </div>
+
+  <button class="btn btn-primary" style="width:100%;padding:14px;font-size:15px;" onclick="startQuiz()">
+    Start Practice →
+  </button>
+</div>
+
+<!-- Quiz Screen -->
+<div class="container" id="quiz-screen" style="display:none">
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="progressLabel">Question 1 of 107</span>
+      <span id="timerDisplay" style="display:none;color:var(--yellow)">⏱ 90:00</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="quiz-layout">
+    <div id="questionArea"></div>
+
+    <div class="question-nav">
+      <div class="nav-title">Questions</div>
+      <div class="nav-grid" id="navGrid"></div>
+      <div class="nav-legend">
+        <div class="legend-row"><div class="legend-swatch" style="background:rgba(63,185,80,0.3);border:1px solid var(--green)"></div>Correct</div>
+        <div class="legend-row"><div class="legend-swatch" style="background:rgba(248,81,73,0.2);border:1px solid var(--red)"></div>Wrong</div>
+        <div class="legend-row"><div class="legend-swatch" style="background:rgba(210,153,34,0.15);border:1px solid var(--yellow)"></div>Skipped</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="results-ring" id="resultsRing">
+      <div class="results-score" id="resultsScore"></div>
+    </div>
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-sub" id="resultsSub"></div>
+    <div class="results-grid">
+      <div class="results-cell">
+        <div class="results-cell-num" style="color:var(--green)" id="rCorrect">0</div>
+        <div class="results-cell-label">Correct</div>
+      </div>
+      <div class="results-cell">
+        <div class="results-cell-num" style="color:var(--red)" id="rWrong">0</div>
+        <div class="results-cell-label">Wrong</div>
+      </div>
+      <div class="results-cell">
+        <div class="results-cell-num" style="color:var(--yellow)" id="rSkipped">0</div>
+        <div class="results-cell-label">Skipped</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="retryMissed()">🔁 Retry Wrong</button>
+      <button class="btn btn-primary" onclick="goHome()">↩ New Session</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Question Bank ──────────────────────────────────────────────
+const ALL_QUESTIONS = [
+  {
+    q: "A pharmaceutical company wants to contract the services of a cloud provider to store employee data and company-specific applications with strict access security. Which type of cloud would be the most appropriate for this scenario?",
+    opts: ["Community cloud","Public cloud","Hybrid cloud","Private cloud"],
+    ans: [3],
+    exp: "Private clouds are intended for a specific organization, offering strict access security. A private cloud can be managed by an outside organization with strict access controls."
+  },
+  {
+    q: "What is a function provided by an implementation of a read-only automation solution?",
+    opts: [
+      "The ability to reduce risk by implementing security policies across the network infrastructure via automated changes",
+      "The ability to use GET and SET requests to retrieve and send data across the network infrastructure",
+      "The ability to use an automated request to audit configurations and manually deploy changes in order to implement compliance",
+      "The ability to implement network infrastructure that receives a configuration from a specific centralized server"
+    ],
+    ans: [2],
+    exp: "A read-only scenario is used to audit configurations and do the next natural step, which is to put the configuration back into compliance."
+  },
+  {
+    q: "Data is being sent from a source PC to a destination server. Which THREE statements correctly describe the function of TCP or UDP in this situation? (Choose three.)",
+    opts: [
+      "The TCP process running on the PC randomly selects the destination port when establishing a session with the server.",
+      "UDP segments are encapsulated within IP packets for transport across the network",
+      "The TCP source port number identifies the sending host on the network",
+      "The UDP destination port number identifies the application or service on the server which will handle the data.",
+      "The source port field identifies the running application or service that will handle data returning to the PC",
+      "TCP is the preferred protocol when a function requires lower network overhead"
+    ],
+    ans: [1, 3, 4],
+    exp: "Layer 4 port numbers identify the application/service. The source port number is added by the sending device and will be the destination port when the response returns. UDP segments are encapsulated in IP packets."
+  },
+  {
+    q: "What type of attack targets an SQL database using the input field of a user?",
+    opts: ["Buffer overflow","SQL injection","Cross site scripting","XML injection"],
+    ans: [1],
+    exp: "A criminal inserts a malicious SQL statement in an entry field on a website where the system does not filter the user input correctly."
+  },
+  {
+    q: "Which command can be used on Linux and MAC hosts to get IP addressing information?",
+    opts: ["ipconfig","ip address","ifconfig","networksetup -getinfo"],
+    ans: [2],
+    exp: "Windows uses ipconfig; Linux and Mac use ifconfig. The 'networksetup -getinfo' command is Mac-only to verify IP settings."
+  },
+  {
+    q: "What are TWO reasons a network administrator would segment a network with a Layer 2 switch? (Choose two.)",
+    opts: [
+      "To create fewer collision domains",
+      "To create more broadcast domains",
+      "To enhance user bandwidth",
+      "To isolate ARP request messages from the rest of the network",
+      "To eliminate virtual circuits",
+      "To isolate traffic between segments"
+    ],
+    ans: [2, 5],
+    exp: "A switch creates temporary point-to-point connections between transmitting/receiving devices, enhancing user bandwidth and isolating traffic between segments."
+  },
+  {
+    q: "Which tool might a developer use as part of a Continuous Integration pipeline in order to build and test source code?",
+    opts: ["SQL","REST","Docker","Jenkins"],
+    ans: [3],
+    exp: "The testing environment often includes automated testing tools such as Jenkins, CircleCI, or Travis CI, as well as integration with a version control system."
+  },
+  {
+    q: "A packet is received by a server. The packet has a destination port number of 8008. What protocol or service is requested?",
+    opts: ["Telnet over SSH","RESTCONF","HTTP","NETCONF"],
+    ans: [2],
+    exp: "Port 8008 is an alternative HTTP port commonly used for HTTP services."
+  },
+  {
+    q: "A network contains multiple VLANs spanning multiple switches. What happens when a device in VLAN 20 sends a broadcast Ethernet frame?",
+    opts: [
+      "Devices in VLAN 20 and the management VLAN see the frame.",
+      "All devices in all VLANs see the frame",
+      "Only devices that are connected to the local switch see the frame",
+      "Only devices in VLAN 20 see the frame."
+    ],
+    ans: [3],
+    exp: "VLANs create logical broadcast domains. Ethernet frames sent by a device on a specific VLAN can only be seen by other devices in the same VLAN."
+  },
+  {
+    q: "Which piece of software is responsible for creating and managing virtual machines, including allocating system resources to each virtual machine as needed?",
+    opts: ["Supervisor","Hypervisor","Host operating system","Hosted operating system"],
+    ans: [1],
+    exp: "A hypervisor creates and manages virtual machines, allocating system resources (CPU, memory, storage) to each VM as needed."
+  },
+  {
+    q: "How is an Ethernet MAC address constructed?",
+    opts: [
+      "The first 3 bytes represent the network upon which the host resides, and the last 3 bytes uniquely identify the host.",
+      "The first 3 bytes represent the vendor OUI, and the last 3 bytes are assigned uniquely by the vendor",
+      "The first 3 bytes are uniquely assigned by IANA, and the last 3 bytes represent the serial number of the host",
+      "The first 3 bytes represent the vendor OUI, and the last 3 bytes are assigned randomly by the operating system."
+    ],
+    ans: [1],
+    exp: "A MAC address has two parts: the first 3 bytes (OUI) identify the vendor/manufacturer, and the last 3 bytes are assigned uniquely by the vendor."
+  },
+  {
+    q: "Which Cisco SDK works with ACI?",
+    opts: ["Cobra","IMC","UCS","Instant Connect"],
+    ans: [0],
+    exp: "The Cobra SDK is the Python SDK that works with Cisco ACI (Application Centric Infrastructure)."
+  },
+  {
+    q: "What platforms are provided by DevNet for community members to share solutions, tool kits, and other resources with each other?",
+    opts: ["Communities","Forums","Sandboxes","Exchanges"],
+    ans: [3],
+    exp: "The Automation Exchange provides a collection of network automation use cases with different solutions and toolkits."
+  },
+  {
+    q: "Which TWO data formats can RESTCONF use when requesting data or responding with data? (Choose two.)",
+    opts: ["JSON","XML","YAML","YANG","HTML"],
+    ans: [0, 1],
+    exp: "RESTCONF requests and responses can use either JSON or XML structured data formats."
+  },
+  {
+    q: "Which DevNet resource would a developer use to look for a Python library that supports APIs for a specific Cisco product?",
+    opts: ["DevNet Learning Labs","DevNet Support","Code Exchange","DevNet Sandbox"],
+    ans: [2],
+    exp: "Code Exchange uses the GitHub API and human moderators to categorize and display related repositories including Python libraries."
+  },
+  {
+    q: "A component was created by combining the disciplines and skills of Dev and Ops, creating a new job role and best-practices playbook for doing Ops with software methods. Which component matches this description?",
+    opts: [
+      "Agile Infrastructure and Operations",
+      "The SRE approach",
+      "Automated infrastructure",
+      "Shared Version control"
+    ],
+    ans: [1],
+    exp: "Google institutionalized the Site Reliability Engineer (SRE) role, which fuses the disciplines and skills of Dev and Ops with a best-practices playbook."
+  },
+  {
+    q: "Refer to the exhibit. A user is working on Ansible on the local NMS to manage remote network devices. Which file is the user creating?",
+    opts: ["Service","Playbook","Variable","Hosts"],
+    ans: [3],
+    exp: "Ansible uses an inventory file called 'hosts' that contains device information used by Ansible playbooks, including SSH credentials for secure access."
+  },
+  {
+    q: "Which DevNet resource would a developer use in order to test custom code in a production-like environment?",
+    opts: ["DevNet Support","DevNet Learning Labs","Code Exchange","DevNet Sandbox"],
+    ans: [3],
+    exp: "DevNet Sandbox provides a test bed where you can try out Cisco hardware and environments within a realistic environment without affecting production systems."
+  },
+  {
+    q: "In which situation would a company implement a reverse proxy as a security solution?",
+    opts: [
+      "When the company has a database and needs to point to a DNS server that uses different IP addresses for development resources",
+      "When the company wants all responses to clients to look like they came from the same server instead of individual ones",
+      "When a hash is created based on the IP address of the request to a particular protected server",
+      "When responses from servers need to be sent over different paths to ensure quality response time to the client devices"
+    ],
+    ans: [1],
+    exp: "A reverse proxy makes sure responses look like they all come from the same server, hiding the individual backend servers."
+  },
+  {
+    q: "A customer wants to use the Agile method. What is a characteristic of this method?",
+    opts: [
+      "A software development process where the highest priority is to satisfy the customer through early and continuous delivery of valuable software",
+      "A process that eliminates anything that does not add value to the project including meetings and documentation",
+      "A software development process that has the results of one phase feed into the next phase",
+      "A more traditional software development process"
+    ],
+    ans: [0],
+    exp: "Agile's highest priority is satisfying the customer through early and continuous delivery of valuable software, and prioritizes responding to change over following a plan."
+  },
+  {
+    q: "A network engineer is creating a Docker container using the docker build command. If the engineer does not specify a tag, which tag will be used by default?",
+    opts: ["tag","latest","(a blank space)","default"],
+    ans: [1],
+    exp: "If you do not specify a tag with the docker build command, it will default to 'latest'."
+  },
+  {
+    q: "Which component in the pyATS ecology handles bundling and running jobs?",
+    opts: ["AEtest","Clover","Genie","EasyPy"],
+    ans: [3],
+    exp: "EasyPy handles bundling and running jobs in the pyATS ecosystem."
+  },
+  {
+    q: "Which THREE avenues are available within DevNet for developers who need help with specific developer scenario questions concerning Cisco products? (Choose three.)",
+    opts: [
+      "Logging a ticket",
+      "Posting to the DevNet zone",
+      "Posting to a news group",
+      "Posting to a community forum",
+      "Posting to a Webex Teams space",
+      "Posting on the Cisco Learning Network"
+    ],
+    ans: [0, 3, 4],
+    exp: "DevNet provides support through logging tickets, community forums, and Webex Teams spaces for developer scenario questions."
+  },
+  {
+    q: "A student is a kinesthetic learner who learns by doing. Which DevNet resource should the instructor tell the student about?",
+    opts: ["DevNet Create","DevNet Learning Labs","DevNet Express","DevNet Zone"],
+    ans: [1],
+    exp: "DevNet Learning Labs offer hands-on, interactive learning experiences ideal for kinesthetic learners who prefer learning by doing."
+  },
+  {
+    q: "What is the default shell commonly used on macOS and Linux?",
+    opts: ["tcsh","csh","Bourne","Bash"],
+    ans: [3],
+    exp: "Bash (Bourne Again Shell) is the most commonly used default shell on both macOS and Linux systems."
+  },
+  {
+    q: "What is immutable infrastructure in DevOps?",
+    opts: [
+      "Infrastructure that is deployed with all component versions locked except for the ability to perform manual configuration changes",
+      "Infrastructure that is only deployed and maintained in containers",
+      "Infrastructure that is entirely maintained and deployed in code and never subjected to manual changes",
+      "Virtualized infrastructure that is deployed as golden images"
+    ],
+    ans: [2],
+    exp: "Immutable infrastructure is infrastructure that can never be changed manually. In DevOps, it is entirely maintained through the use of code."
+  },
+  {
+    q: "What is the most common cause of IT outages?",
+    opts: [
+      "An engineer misconfiguring a device or network with manual changes",
+      "An experienced engineer using an open source product",
+      "An experienced engineer implementing a configuration using automation",
+      "A threat actor targeting the enterprise equipment"
+    ],
+    ans: [0],
+    exp: "Most outages are caused by systems being misconfigured, commonly due to human error as manual changes are being made."
+  },
+  {
+    q: "Which string of characters is used to identify the beginning of a new separate document when multiple documents are in a single YAML file?",
+    opts: ['Three slashes "///"','Three dots "..."','Three pound signs "###"','Three dashes "---"'],
+    ans: [3],
+    exp: "YAML files conventionally open with three dashes (---) to separate documents within a single YAML file."
+  },
+  {
+    q: "What is the difference between functions and methods in the Python programming structure?",
+    opts: [
+      "Functions can use global variables whereas methods can only use local variables.",
+      "Functions are called by a referencing object whereas methods are called by the names.",
+      "Functions can pass arguments whereas methods can pass only predefined keywords.",
+      "Functions are standalone code blocks whereas methods are code blocks associated with an object."
+    ],
+    ans: [3],
+    exp: "Functions are standalone code blocks while methods are code blocks associated with an object, typically for object-oriented programming."
+  },
+  {
+    q: "Which command is used to create a new Git repository?",
+    opts: ["git init","git add","git commit","git clone"],
+    ans: [0],
+    exp: "'git init' creates a new empty Git repository or reinitializes an existing one in the current directory."
+  },
+  {
+    q: "Which stakeholder determines the useful value of software product features in the Lean process?",
+    opts: ["The customer","The Scrum master","The reviewer","The programmer"],
+    ans: [0],
+    exp: "In Lean methodology, value is determined by the customer — anything the customer does not find useful is considered waste."
+  },
+  {
+    q: "What is a principle of the Lean software development model?",
+    opts: [
+      "Adding additional product features that the customer did not ask for",
+      "Assigning resources to multiple projects so that effort can be divided on more than one task at a time",
+      "Making decisions as late as possible in the process so that more facts and details are available",
+      "Ordering workers to do tasks they may not want to do to ensure they get done"
+    ],
+    ans: [2],
+    exp: "Lean principles include deciding as late as possible — waiting until you have as many facts and options available before making commitments."
+  },
+  {
+    q: "What character is used to separate the key and value pairs in YAML?",
+    opts: ["Colon :","Semi colon ;","Underscore _","Forward slash /"],
+    ans: [0],
+    exp: "In YAML, key-value pairs are separated by a colon followed by a space (': ')."
+  },
+  {
+    q: "Which git command is used to compare changes between files?",
+    opts: ["git diff","git merge","git checkout","git status"],
+    ans: [0],
+    exp: "'git diff' shows differences between the working directory and the index, or between commits, allowing you to compare file changes."
+  },
+  {
+    q: "What is an example of a use supported by Cisco UCS Director and UCS Manager?",
+    opts: [
+      "Bare metal server provisioning and monitoring of virtual environments",
+      "Call center and call management over IP networks",
+      "Underlying central system workflow management and migration",
+      "Telemetry data collection and analysis"
+    ],
+    ans: [0],
+    exp: "Cisco UCS Director and UCS Manager support bare metal server provisioning, monitoring of virtual environments, and data center management."
+  },
+  {
+    q: "How can a Webex Teams administrator retrieve additional details about a user through an API call?",
+    opts: [
+      "By using the value of the organization name in the API call",
+      "By using the value of a Webex Teams registered email address in the API call",
+      "By using the value of the person id key in the API call",
+      "By using the value of orgId in the API call"
+    ],
+    ans: [2],
+    exp: "The person id key is used in the API call to retrieve additional details about a specific user in Webex Teams."
+  },
+  {
+    q: "Which library is the most commonly used Python library for connecting NETCONF clients with a NETCONF server?",
+    opts: ["posix","pyclient","ncclient","pypi"],
+    ans: [2],
+    exp: "ncclient is the most widely used Python library for NETCONF client implementations, providing a high-level API for working with NETCONF servers."
+  },
+  {
+    q: "Which TWO APIs allow for Cisco Meraki device provisioning and real-time notifications? (Choose two.)",
+    opts: ["Webhook API","Investigation API","Dashboard API","Enforcement API","Reporting API"],
+    ans: [0, 2],
+    exp: "Dashboard API provides device provisioning, management, and monitoring. Webhook API provides real-time notification system for network alerts."
+  },
+  {
+    q: "A packet is received by a server. The packet has a destination port number of 443. What protocol or service is requested?",
+    opts: ["HTTP","NTP","DHCP","HTTPS"],
+    ans: [3],
+    exp: "Port 443 is the standard port for HTTPS (HTTP Secure), which uses TLS/SSL encryption."
+  },
+  {
+    q: "When thinking about the functional planes of a network, what is unique about the data plane?",
+    opts: [
+      "It includes protocols used to remotely access network devices.",
+      "It includes the SSH protocol.",
+      "It manipulates data and outputs it in the XML format.",
+      "It is responsible for the switching of packets in hardware."
+    ],
+    ans: [3],
+    exp: "The data plane (forwarding plane) is responsible for the switching of packets in hardware, using information from the control plane."
+  },
+  {
+    q: "Which Docker component defines the steps needed to create an image that can be deployed in a variety of environments?",
+    opts: ["UnionFS","Dockerfile","cross-site script","namespaces"],
+    ans: [1],
+    exp: "A Dockerfile is a text file that defines the steps needed to create a Docker image, which can then be deployed in various environments."
+  },
+  {
+    q: "Which THREE statements describe characteristics of a virtual machine? (Choose three.)",
+    opts: [
+      "It is created and deployed using the Docker format.",
+      "It includes a guest operating system.",
+      "It runs on top of a hypervisor",
+      "It shares the operating system of the host computer.",
+      "It is completely self-contained with its own emulated storage, memory, and network interfaces.",
+      "It requires Windows as the host operating system."
+    ],
+    ans: [1, 2, 4],
+    exp: "Virtual machines include a guest OS, run on top of a hypervisor, and are completely self-contained with emulated storage, memory, and network interfaces."
+  },
+  {
+    q: "What are TWO characteristics of the staging environment of the four-tier deployment environment structure? (Choose two.)",
+    opts: [
+      "It is the point where code has been tested multiple times and is error free.",
+      "It is structured as close as possible to the actual production environment.",
+      "It is where the code undergoes final acceptance testing in a realistic environment.",
+      "It is where end users will interact with the code.",
+      "It often includes automated testing tools such as Jenkins, CircleCI, or Travis CI."
+    ],
+    ans: [1, 2],
+    exp: "The staging environment mirrors production as closely as possible and is where final acceptance testing occurs in a realistic environment."
+  },
+  {
+    q: "Which menu option would the engineer use to run a Jenkins pipeline?",
+    opts: ["Configure","Changes","Build Now","Workspace"],
+    ans: [2],
+    exp: "'Build Now' is the menu option used to trigger/run a Jenkins pipeline job."
+  },
+  {
+    q: "What is the purpose of the preparation stage in a Jenkins build script?",
+    opts: [
+      "It makes sure that any previous instances of a particular Docker container are stopped and removed.",
+      "It catches and removes any errors.",
+      "It runs the SUCCESS Docker container.",
+      "It places a log of any errors in the SUCCESS file."
+    ],
+    ans: [0],
+    exp: "The preparation stage in a Jenkins pipeline ensures that any previous Docker container instances are stopped and removed before starting a new build."
+  },
+  {
+    q: "Which technique is used to make the output of password hashing nondeterministic?",
+    opts: [
+      "Password length and complexity",
+      "Multifactor authentication",
+      "Password salting",
+      "Password strength validation tools"
+    ],
+    ans: [2],
+    exp: "Password salting adds a random value (salt) to a password before hashing, making the output nondeterministic and protecting against rainbow table attacks."
+  },
+  {
+    q: "What does self-service refer to in the context of enterprise IT?",
+    opts: [
+      "Imaging frequently used server configurations for rapid deployment",
+      "Distributing and implementing broad access to public cloud infrastructure-as-a-service services",
+      "Mainstreamed processes that promote a lower IT headcount by implementing automation",
+      "Automated tools and methods that deliver preconfigured developer platforms on demand"
+    ],
+    ans: [3],
+    exp: "Self-service in IT refers to automated tools and methods that allow developers to provision and access preconfigured platforms on demand without manual IT intervention."
+  },
+  {
+    q: "Which statement describes the term orchestration in IT automation?",
+    opts: [
+      "Orchestration is aimed at managing workload lifecycles and reacting dynamically to changing conditions in order to optimize processes.",
+      "Orchestration is the process of preparing a server through the installation of libraries or daemons.",
+      "Orchestration is the building, arranging, integration, and preparation of multi-component applications across multiple nodes.",
+      "Orchestration is the obtaining and provisioning of compute, storage, and network infrastructure."
+    ],
+    ans: [0],
+    exp: "Orchestration refers to automation aimed at managing workload lifecycles and reacting dynamically to changing conditions, particularly in container environments."
+  },
+  {
+    q: "What is an example of a read-only automation solution?",
+    opts: [
+      "Streamlining the management of L3 firewall rules in Cisco Meraki networks",
+      "Gathering SD-WAN inventory data using Python and recording the values in a database",
+      "Simplifying the automation of network device authentication, configuration, and consistency",
+      "Gathering the current list of ACL entries on an IOS XE router and enforcing consistency"
+    ],
+    ans: [1],
+    exp: "Gathering inventory data and recording it — without making any changes — is a read-only automation solution."
+  },
+  {
+    q: "A student verifies communications to the CSR1000v VM by opening Firefox and gets a 'Potential Security Risk Ahead' message. What is the security issue?",
+    opts: [
+      "The SSL/TLS certificate uses a public key size of less than 1024 bits.",
+      "The SSL/TLS certificate is self-signed by the router.",
+      "The CA for the SSL/TLS certificate cannot be reached.",
+      "The traffic to the VM is not encrypted."
+    ],
+    ans: [1],
+    exp: "The router uses a self-signed certificate which browsers don't trust by default, causing the security warning."
+  },
+  {
+    q: "How do APIs affect traditional IT tasks?",
+    opts: [
+      "They are used to replace network infrastructure and implement network virtualization.",
+      "They are used to eliminate repetitive manual tasks and replace them with automation.",
+      "They are used to increase computer processing speed and lower power consumption.",
+      "They are used to increase hardware speed and lower power consumption."
+    ],
+    ans: [1],
+    exp: "APIs are used to eliminate repetitive manual tasks and replace them with automation, streamlining IT operations."
+  },
+  {
+    q: "PC1 needs to resolve the host name of the web server into an IP address by using DNS. What destination IP address and port will PC1 assign to the DNS query packet? (DNS server: 192.168.20.3, Web server: 192.168.20.2)",
+    opts: [
+      "192.168.20.2 port 80",
+      "192.168.20.3 port 53",
+      "192.168.20.3 port 80",
+      "192.168.10.1 port 53"
+    ],
+    ans: [1],
+    exp: "DNS queries are sent to the DNS server (192.168.20.3) on port 53, which is the well-known port for DNS."
+  },
+  {
+    q: "Which TWO statements are true about NTP servers in an enterprise network? (Choose two.)",
+    opts: [
+      "There can only be one NTP server on an enterprise network",
+      "All NTP servers synchronize directly to a stratum 1 time source.",
+      "NTP servers at stratum 1 are directly connected to an authoritative time source.",
+      "NTP servers ensure an accurate time stamp on logging and debugging information.",
+      "NTP servers control the mean time between failures (MTBF) for key network devices."
+    ],
+    ans: [2, 3],
+    exp: "Stratum 1 NTP servers are directly connected to an authoritative time source. NTP ensures accurate timestamps for logging, debugging, and security."
+  },
+  {
+    q: "A network administrator can successfully ping www.cisco.com, but cannot ping the company web server in another city. Which tool or command would help identify the specific router where the packet was lost or delayed?",
+    opts: ["traceroute","ipconfig","telnet","netstat"],
+    ans: [0],
+    exp: "Traceroute provides connectivity information about the path a packet takes, showing every router (hop) along the way and the time taken to reach each hop."
+  },
+  {
+    q: "Which TWO HTTP functions correspond to the UPDATE function in CRUD? (Choose two.)",
+    opts: ["POST","DELETE","PATCH","PUT","GET"],
+    ans: [2, 3],
+    exp: "CRUD UPDATE maps to both PUT and PATCH in HTTP. PUT replaces the entire resource; PATCH modifies part of the resource."
+  },
+  {
+    q: "Which HTTP status code category is used in the response to indicate that a REST API request contains an error on the client side?",
+    opts: ["1xx","2xx","3xx","4xx","5xx"],
+    ans: [3],
+    exp: "4xx codes indicate client errors — the request contains an error such as bad syntax or invalid input that the client must fix before resending."
+  },
+  {
+    q: "A network administrator is using a Python script to test a REST API request. The traceback message indicates that there is an error in the URI. What is the error? (The resource path appears wrong.)",
+    opts: [
+      "The protocol is wrong.",
+      "The resource path is wrong.",
+      "The SSL certificate is invalid.",
+      "The destination web host address is invalid."
+    ],
+    ans: [1],
+    exp: "When a traceback indicates an error in the URI, it typically means the resource path component of the URI is incorrectly formed."
+  },
+  {
+    q: "What are TWO requirements for an application to communicate with a webhook provider? (Choose two.)",
+    opts: [
+      "The application must support JSON.",
+      "The application must always be running.",
+      "The application must register a URL with the webhook provider.",
+      "The host where the application is running must have an SSH client installed.",
+      "The host where the application is running must have an SSH server running."
+    ],
+    ans: [1, 2],
+    exp: "The application must be always running to receive HTTP POST requests, and must register a URI so the provider knows where to send notifications."
+  },
+  {
+    q: "A student sends a request to a network device and receives a response with the status code of 202. What does this status code mean?",
+    opts: [
+      "The request was understood but has been rejected by the server.",
+      "The request was successful and typically includes a payload.",
+      "The request has been accepted for processing, but the processing has not been completed.",
+      "Because of a server error, the request cannot be fulfilled."
+    ],
+    ans: [2],
+    exp: "HTTP 202 Accepted means the request has been accepted for processing, but the processing has not yet been completed."
+  },
+  {
+    q: "What are TWO characteristics of stateless applications? (Choose two.)",
+    opts: [
+      "They must run on container orchestrators like Kubernetes.",
+      "They can be freely scaled across available capacity without disrupting ongoing customer connections.",
+      "They can be scaled only by redeploying them and destroying the data that users or operators previously needed.",
+      "They maintain the user state within the local user machine so that automation can work non-destructively.",
+      "They can store a user state in an accessible database separate from application servers and other components."
+    ],
+    ans: [1, 4],
+    exp: "Stateless applications can scale freely without disrupting connections, and can store state in an external database separate from the application servers."
+  },
+  {
+    q: "What is a characteristic of the continuous integration component of the CI/CD philosophy?",
+    opts: [
+      "Code changes are continually merged with the main branch of the application, so change sets are small.",
+      "Code changes are tested and integrated with the main branch then tested again before they are deployed into production.",
+      "Code is constantly deployed into production where users serve as the final testers.",
+      "Application development is performed in short sprints so that enough code is always in a deployable state."
+    ],
+    ans: [0],
+    exp: "Continuous Integration means code changes are continually merged into the main branch, keeping change sets small and enabling frequent integration."
+  },
+  {
+    q: "A customer wants to use the Waterfall method. What is a characteristic of this method?",
+    opts: [
+      "A process that amplifies learning as well as delivers as quickly as possible",
+      "A software development process where the highest priority is to satisfy the customer through early and continuous delivery",
+      "A software development process where a particular phase depends on the results of the previous phase",
+      "A process that eliminates anything that does not add value to the project"
+    ],
+    ans: [2],
+    exp: "Waterfall methodology is sequential — each phase depends on the results of the previous phase, and the process can only move forward, never backward."
+  },
+  {
+    q: "In which SDLC phase is the software product installed into the production environment to decide if it is ready for release?",
+    opts: ["Implementation","Deployment","Design","Testing"],
+    ans: [1],
+    exp: "The deployment phase installs software into the production environment. If there are no issues, the product manager works with architects to decide if it's ready to release."
+  },
+  {
+    q: "Which convention is used in Python to indicate that methods and variables in a class are private?",
+    opts: [
+      "By using a single preceding underscore ( _ ) for a method or variable",
+      "By using the command class private classname(): to start the class definition",
+      "By using two preceding hyphens ( -- ) for a method or variable",
+      "By declaring a private method or variable in the beginning of the class definition"
+    ],
+    ans: [0],
+    exp: "In Python, a single preceding underscore (_) indicates that a method or variable is intended to be private, though Python does not enforce this at the language level."
+  },
+  {
+    q: "A packet is received by a server. The packet has a destination port number of 80. What protocol or service is requested?",
+    opts: ["DHCP","Telnet over SSH","HTTP","RESTCONF"],
+    ans: [2],
+    exp: "Port 80 is the well-known port for HTTP (HyperText Transfer Protocol)."
+  },
+  {
+    q: "A network administrator is developing an application to control a Webex device through xAPI. Which THREE protocols can be used to access xAPI? (Choose three.)",
+    opts: ["Telnet","HTTP","XML","RS-232","FTP","JSON"],
+    ans: [0, 1, 3],
+    exp: "There are multiple ways to access xAPI: Telnet/SSH, HTTP, and RS-232 serial connection."
+  },
+  {
+    q: "Which type of request is used to send a message to a Webex Teams space using Python and the Messages API?",
+    opts: ["PUT","POST","GET","PATCH"],
+    ans: [1],
+    exp: "The POST method is used to create new resources in REST APIs — including sending (creating) a new message to a Webex Teams space."
+  },
+  {
+    q: "A network administrator is assigned the 172.16.0.0/24 block. The design includes 172.16.0.96/26. What is the flaw?",
+    opts: [
+      "This design is flawed because the 172.16.0.128/27 network number is invalid.",
+      "This design will work for the branch office.",
+      "This design is flawed because no design could have two networks that use a /26 mask and are not consecutive blocks of addresses.",
+      "This design is flawed because the 172.16.0.96/26 network is not a valid block of addresses.",
+      "This design is flawed because the 172.16.0.96/26 network overlaps with other addresses."
+    ],
+    ans: [3],
+    exp: "Valid /26 blocks are: .0/26, .64/26, .128/26, .192/26. The address 172.16.0.96/26 is not a valid network block — it falls in the middle of the .64/26 block."
+  },
+  {
+    q: "Which statement describes a stateful firewall?",
+    opts: [
+      "It can filter packets based on information at Layers 3, 4, 5 and 7 of the OSI reference model.",
+      "It can determine if the connection is in the initiation, data transfer, or termination phase.",
+      "It can only filter packets based on limited Layer 3 and 4 information.",
+      "It can expand the number of IP addresses available and can hide network addressing design."
+    ],
+    ans: [1],
+    exp: "A stateful firewall tracks the state of network connections, allowing it to determine if a packet belongs to the initiation, data transfer, or termination phase."
+  },
+  {
+    q: "A customer wants to use the Lean method. What is a characteristic of this method?",
+    opts: [
+      "A process that eliminates inefficient ways of working like expecting coders to multitask",
+      "A software development process that focuses on frequent delivery of working software and collaboration",
+      "A software development process that has the results of one phase feed into the next phase",
+      "A software development process that can only go forward"
+    ],
+    ans: [0],
+    exp: "Lean eliminates waste and inefficiency — including practices like multitasking which reduce focus and productivity. It also amplifies learning and delivers as fast as possible."
+  },
+  {
+    q: "A packet is received by a server. The packet has a destination port number of 123. What protocol or service is requested?",
+    opts: ["DNS","SSH","NTP","RESTCONF"],
+    ans: [2],
+    exp: "Port 123 is the well-known port for NTP (Network Time Protocol)."
+  },
+  {
+    q: "Which scenario exhibits the 'social proof' principle of human influence?",
+    opts: [
+      "A user receives a phone call from someone claiming to be from the IT department who needs to verify user credentials.",
+      "A user visits a web site offering a free gift if the user provides contact information.",
+      "A user opens an email advertising a free trial that is only available for a few hours.",
+      "A user completes a survey requesting personal information after seeing co-workers completing the survey."
+    ],
+    ans: [3],
+    exp: "Social proof is the influence principle where people follow the actions of others. Completing a survey because coworkers are doing it demonstrates social proof."
+  },
+  {
+    q: "Which SQL injection defense method should be used only as a last resort?",
+    opts: [
+      "Escaping all user-supplied input",
+      "Using a database firewall",
+      "Implementing whitelist input validation",
+      "Using parameterized queries"
+    ],
+    ans: [0],
+    exp: "Escaping user-supplied input is considered a last resort because it is error-prone. Parameterized queries and whitelist validation are preferred methods."
+  },
+  {
+    q: "Which type of ISE node provides network access, posturing, guest access, client provisioning, and profiling services?",
+    opts: ["Monitoring","Administration","pxGrid","Policy service"],
+    ans: [3],
+    exp: "The Policy Service node in ISE enables network access, posture, guest, and client provisioning services."
+  },
+  {
+    q: "Which communication protocol does Ansible use to connect to remote devices?",
+    opts: ["Telnet over VPN","HTTPS","Secure FTP","SSH"],
+    ans: [3],
+    exp: "Ansible communicates with remote machines over the SSH protocol using native OpenSSH by default."
+  },
+  {
+    q: "What is an architectural constraint to which a true RESTful API web service must adhere?",
+    opts: [
+      "It must support XML-RPC and JSON-RPC.",
+      "It allows resource caching.",
+      "It should be behind a firewall.",
+      "It operates as a cloud service."
+    ],
+    ans: [1],
+    exp: "REST constraints include: Client/server, Stateless, Cache, Uniform interface, Layered system, and Code on demand. Caching is one of the core REST constraints."
+  },
+  {
+    q: "A packet is received by a server. The packet has a destination port number of 53. What protocol or service is requested?",
+    opts: ["DNS","NetBIOS (NetBT)","POP3","IMAP"],
+    ans: [0],
+    exp: "Port 53 is the well-known port for DNS (Domain Name System)."
+  },
+  {
+    q: "Which statement accurately describes dynamic NAT?",
+    opts: [
+      "It always maps a private IP address to a public IP address.",
+      "It provides an automated mapping of inside local to inside global IP addresses.",
+      "It provides a mapping of internal host names to IP addresses.",
+      "It dynamically provides IP addressing to internal hosts."
+    ],
+    ans: [1],
+    exp: "Dynamic NAT provides a dynamic (automated) mapping of inside local to inside global IP addresses from a pool of available public addresses."
+  },
+  {
+    q: "A packet is received by a server. The packet has a destination port number of 830. What protocol or service is requested?",
+    opts: ["NTP","DHCP","NETCONF","HTTPS"],
+    ans: [2],
+    exp: "By default, the NETCONF server runs on TCP port 830 and uses the SSH process for transport."
+  },
+  {
+    q: "Which programming language is supported by the Webex xAPI to develop macros for on-device customization?",
+    opts: ["Java","Python","JavaScript","C++"],
+    ans: [2],
+    exp: "Webex xAPI supports JavaScript for developing macros that run directly on the Webex device for on-device customization."
+  },
+  {
+    q: "Which Cisco management system is designed as the solution for Software-Defined Networking and runs on Nexus 9000 hardware?",
+    opts: [
+      "Application Centric Infrastructure platform (ACI)",
+      "IOS XE",
+      "Nexus Operating System (NX-OS)",
+      "DNA Center"
+    ],
+    ans: [0],
+    exp: "ACI (Application Centric Infrastructure) is Cisco's SDN solution that runs on Nexus 9000 series hardware."
+  },
+  {
+    q: "A developer issues a Linux command 'python3 -m venv devenv'. What is the developer trying to achieve?",
+    opts: [
+      "To install the devnet tool sets in the Python 3 virtual environment named venv",
+      "To create a Python 3 virtual environment named devenv",
+      "To activate the Python 3 virtual environment named devenv",
+      "To enter the Python 3 virtual environment named venv using the devnet tool sets"
+    ],
+    ans: [1],
+    exp: "The syntax 'python3 -m venv <name>' creates a Python 3 virtual environment. The '-m venv' calls the venv module, and 'devenv' is the name given to the new virtual environment."
+  },
+  {
+    q: "Two network engineers are discussing cut-through switching. What is an important concept related to the cut-through method?",
+    opts: [
+      "The fragment-free switching offers the lowest level of latency.",
+      "Fast-forward switching can be viewed as a compromise between store-and-forward switching and fragment-free switching.",
+      "Fragment-free switching is the typical cut-through method of switching.",
+      "Packets can be relayed with errors when fast-forward switching is used."
+    ],
+    ans: [3],
+    exp: "Fast-forward switching starts forwarding before the entire packet is received, so packets may be relayed with errors. It offers the lowest latency and is the typical cut-through method."
+  },
+  {
+    q: "When thinking about the functional planes of a network, what is unique about the control plane?",
+    opts: [
+      "It forwards data through a network device.",
+      "It manipulates data and outputs it in the XML format.",
+      "It includes the SNMP protocol.",
+      "It includes network traffic being processed by EIGRP or OSPF."
+    ],
+    ans: [3],
+    exp: "The control plane processes traffic required to maintain network functionality, including routing protocols like OSPF, BGP, and EIGRP. It processes data in software."
+  },
+  {
+    q: "Refer to the exhibit. If PC1 is communicating with a web server on the Internet, which TWO TCP/IP layers are responsible for encapsulating the message and assigning a source port number? (Choose two.)",
+    opts: ["Session","Network","Transport","Physical","Application"],
+    ans: [2, 4],
+    exp: "The Application layer creates the request data, and the Transport layer (TCP/UDP) adds the source port number when encapsulating the segment."
+  },
+  {
+    q: "A network security administrator is evaluating products that automate threat containment through APIs. Which Cisco product provides a rule-based engine for enabling policy-based network access to users and devices?",
+    opts: [
+      "Identity Services Engine",
+      "Umbrella",
+      "Threat Grid",
+      "Advanced Malware Protection"
+    ],
+    ans: [0],
+    exp: "ISE (Cisco Identity Services Engine) provides a rule-based engine for policy-based network access. Its APIs can automate threat containment when a threat is detected."
+  },
+  {
+    q: "When thinking about the functional planes of a network, what is unique about the management plane?",
+    opts: [
+      "It forwards data based on STP settings.",
+      "It is responsible for the switching of packets in hardware.",
+      "It includes protocols used to monitor network devices.",
+      "It includes applications and protocols used between network devices such as routers."
+    ],
+    ans: [2],
+    exp: "The management plane manages traffic destined for the network device itself, including protocols like SSH and SNMP used for monitoring and management."
+  }
+];
+
+// ── State ──────────────────────────────────────────────────────
+let questions = [];
+let current = 0;
+let answers = {};      // index -> 'correct' | 'wrong' | 'skipped'
+let selectedOpts = []; // for current question
+let locked = false;
+let mode = 'all';
+let timerInterval = null;
+let timerSeconds = 90 * 60;
+let missedIndices = [];
+
+// ── Mode selection ─────────────────────────────────────────────
+function selectMode(el, m) {
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  mode = m;
+}
+
+function startQuiz() {
+  let pool = [...ALL_QUESTIONS];
+
+  if (mode === 'missed') {
+    const stored = JSON.parse(localStorage.getItem('devnet_missed') || '[]');
+    if (stored.length === 0) {
+      alert('No missed questions yet! Do a session first.');
+      return;
+    }
+    pool = stored.map(i => ALL_QUESTIONS[i]);
+  }
+
+  if (mode === 'random') {
+    pool = pool.sort(() => Math.random() - 0.5);
+  }
+
+  const count = document.getElementById('qCount').value;
+  if (count !== 'all') pool = pool.slice(0, parseInt(count));
+
+  questions = pool;
+  answers = {};
+  selectedOpts = [];
+  locked = false;
+  current = 0;
+  missedIndices = [];
+
+  document.getElementById('mode-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('questionArea').style.display = 'block';
+
+  buildNav();
+  renderQuestion();
+  updateHeader();
+
+  if (mode === 'timed') {
+    timerSeconds = 90 * 60;
+    document.getElementById('timerDisplay').style.display = 'inline';
+    timerInterval = setInterval(tickTimer, 1000);
+  }
+}
+
+function tickTimer() {
+  timerSeconds--;
+  const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+  const s = (timerSeconds % 60).toString().padStart(2, '0');
+  document.getElementById('timerDisplay').textContent = `⏱ ${m}:${s}`;
+  if (timerSeconds <= 0) {
+    clearInterval(timerInterval);
+    showResults();
+  }
+}
+
+// ── Navigation ─────────────────────────────────────────────────
+function buildNav() {
+  const grid = document.getElementById('navGrid');
+  grid.innerHTML = '';
+  questions.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === current ? ' active' : '');
+    dot.textContent = i + 1;
+    dot.onclick = () => jumpTo(i);
+    dot.id = `nav-${i}`;
+    grid.appendChild(dot);
+  });
+}
+
+function updateNav(i, state) {
+  const dot = document.getElementById(`nav-${i}`);
+  if (!dot) return;
+  dot.className = 'nav-dot';
+  if (i === current) dot.classList.add('active');
+  if (state === 'correct') dot.classList.add('answered-correct');
+  else if (state === 'wrong') dot.classList.add('answered-wrong');
+  else if (state === 'skipped') dot.classList.add('skipped');
+}
+
+function jumpTo(i) {
+  if (!locked && selectedOpts.length > 0) {
+    // mark current as skipped if jumped away without submitting
+  }
+  current = i;
+  selectedOpts = [];
+  locked = false;
+  renderQuestion();
+  buildNav();
+  // re-apply answered states
+  Object.entries(answers).forEach(([idx, state]) => updateNav(parseInt(idx), state));
+  updateNav(current, null);
+  document.getElementById(`nav-${current}`).classList.add('active');
+}
+
+// ── Render ─────────────────────────────────────────────────────
+function renderQuestion() {
+  const q = questions[current];
+  const isMulti = q.ans.length > 1;
+  const letters = ['A','B','C','D','E','F'];
+
+  // Re-check if already answered
+  const prevState = answers[current];
+
+  const cardHTML = `
+    <div class="question-card" id="qCard">
+      <div class="card-header">
+        <span class="q-badge">Q${current + 1}</span>
+        ${isMulti ? `<span class="multi-badge">SELECT ${q.ans.length}</span>` : ''}
+        <span style="margin-left:auto">DevNet Associate v1.0</span>
+      </div>
+      <div class="question-text">${q.q}</div>
+      <div class="options" id="optList">
+        ${q.opts.map((o, i) => `
+          <div class="option ${prevState ? getOptionClass(q, i) : ''} ${prevState ? 'locked' : ''}"
+               id="opt-${i}" onclick="toggleOpt(${i})">
+            <div class="option-letter">${letters[i]}</div>
+            <div class="option-text">${o}</div>
+            ${prevState ? `<div class="option-icon">${q.ans.includes(i) ? '✅' : ''}</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+      ${prevState ? `
+        <div class="feedback ${prevState === 'correct' ? 'correct' : 'wrong'}">
+          <div class="feedback-icon">${prevState === 'correct' ? '✅' : '❌'}</div>
+          <div class="feedback-body">
+            <div class="feedback-label">${prevState === 'correct' ? 'Correct!' : 'Incorrect'}</div>
+            ${q.exp ? `<div class="explanation">${q.exp}</div>` : ''}
+          </div>
+        </div>
+      ` : '<div class="feedback" id="feedbackBox"></div>'}
+      <div style="padding:0 20px 20px">
+        <div class="actions">
+          <button class="btn btn-ghost" onclick="skipQuestion()">Skip →</button>
+          ${!prevState ? `<button class="btn btn-primary" onclick="submitAnswer()" id="submitBtn" disabled>Submit</button>` : ''}
+          ${prevState ? `<button class="btn btn-primary" onclick="nextQuestion()">${current < questions.length - 1 ? 'Next →' : 'Finish 🏁'}</button>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('questionArea').innerHTML = cardHTML;
+  updateProgress();
+
+  if (prevState) { locked = true; }
+}
+
+function getOptionClass(q, i) {
+  if (q.ans.includes(i)) return 'correct';
+  return '';
+}
+
+function toggleOpt(i) {
+  if (locked) return;
+  const q = questions[current];
+  const isMulti = q.ans.length > 1;
+  const el = document.getElementById(`opt-${i}`);
+
+  if (isMulti) {
+    if (selectedOpts.includes(i)) {
+      selectedOpts = selectedOpts.filter(x => x !== i);
+      el.classList.remove('selected');
+    } else {
+      selectedOpts.push(i);
+      el.classList.add('selected');
+    }
+  } else {
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    selectedOpts = [i];
+    el.classList.add('selected');
+  }
+
+  const btn = document.getElementById('submitBtn');
+  if (btn) btn.disabled = selectedOpts.length === 0;
+}
+
+function submitAnswer() {
+  if (selectedOpts.length === 0 || locked) return;
+  const q = questions[current];
+  locked = true;
+
+  const sortedSel = [...selectedOpts].sort();
+  const sortedAns = [...q.ans].sort();
+  const isCorrect = JSON.stringify(sortedSel) === JSON.stringify(sortedAns);
+
+  answers[current] = isCorrect ? 'correct' : 'wrong';
+  if (!isCorrect) missedIndices.push(current);
+
+  // Style options
+  q.opts.forEach((_, i) => {
+    const el = document.getElementById(`opt-${i}`);
+    if (!el) return;
+    el.classList.add('locked');
+    el.classList.remove('selected');
+    if (q.ans.includes(i)) {
+      el.classList.add('correct');
+      el.innerHTML += '<div class="option-icon">✅</div>';
+    } else if (selectedOpts.includes(i)) {
+      el.classList.add('wrong');
+      el.innerHTML += '<div class="option-icon">❌</div>';
+    } else {
+      el.classList.add('dimmed');
+    }
+  });
+
+  // Show feedback
+  const fb = document.getElementById('feedbackBox');
+  if (fb) {
+    fb.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+    fb.innerHTML = `
+      <div class="feedback-icon">${isCorrect ? '✅' : '❌'}</div>
+      <div class="feedback-body">
+        <div class="feedback-label">${isCorrect ? 'Correct!' : 'Incorrect — see highlighted answer'}</div>
+        ${q.exp ? `<div class="explanation">${q.exp}</div>` : ''}
+      </div>
+    `;
+  }
+
+  // Swap submit to next
+  const actions = document.querySelector('.actions');
+  actions.innerHTML = `
+    <button class="btn btn-ghost" onclick="skipQuestion()" style="display:none"></button>
+    <button class="btn btn-primary" onclick="nextQuestion()">${current < questions.length - 1 ? 'Next →' : 'Finish 🏁'}</button>
+  `;
+
+  updateNav(current, answers[current]);
+  updateHeader();
+}
+
+function skipQuestion() {
+  answers[current] = 'skipped';
+  updateNav(current, 'skipped');
+  nextQuestion();
+}
+
+function nextQuestion() {
+  if (current < questions.length - 1) {
+    current++;
+    selectedOpts = [];
+    locked = false;
+    renderQuestion();
+    document.getElementById(`nav-${current}`) && (document.getElementById(`nav-${current}`).scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+    // re-apply nav states
+    Object.entries(answers).forEach(([idx, state]) => updateNav(parseInt(idx), state));
+    document.getElementById(`nav-${current}`) && document.getElementById(`nav-${current}`).classList.add('active');
+    updateHeader();
+  } else {
+    showResults();
+  }
+}
+
+function updateProgress() {
+  const total = questions.length;
+  const done = Object.keys(answers).length;
+  const pct = (done / total) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `Question ${current + 1} of ${total}`;
+}
+
+function updateHeader() {
+  const correct = Object.values(answers).filter(v => v === 'correct').length;
+  const wrong = Object.values(answers).filter(v => v === 'wrong').length;
+  document.getElementById('statCorrect').textContent = correct;
+  document.getElementById('statWrong').textContent = wrong;
+  document.getElementById('statCurrent').textContent = current + 1;
+  document.getElementById('statTotal').textContent = questions.length;
+}
+
+// ── Results ────────────────────────────────────────────────────
+function showResults() {
+  if (timerInterval) clearInterval(timerInterval);
+  document.getElementById('questionArea').style.display = 'none';
+
+  const total = questions.length;
+  const correct = Object.values(answers).filter(v => v === 'correct').length;
+  const wrong = Object.values(answers).filter(v => v === 'wrong').length;
+  const skipped = Object.values(answers).filter(v => v === 'skipped').length;
+  const pct = Math.round((correct / total) * 100);
+
+  // Save missed for retry
+  const globalMissed = missedIndices.map(i => ALL_QUESTIONS.indexOf(questions[i])).filter(i => i >= 0);
+  localStorage.setItem('devnet_missed', JSON.stringify([...new Set(globalMissed)]));
+
+  document.getElementById('resultsRing').style.setProperty('--pct', pct);
+  document.getElementById('resultsScore').textContent = pct + '%';
+  document.getElementById('resultsTitle').textContent = pct >= 80 ? '🎉 Excellent Work!' : pct >= 60 ? '📈 Keep Practicing' : '💪 Study More';
+  document.getElementById('resultsSub').textContent = `${correct} / ${total} correct · ${pct >= 80 ? 'Ready for the exam!' : 'Review the explanations and try again'}`;
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rWrong').textContent = wrong;
+  document.getElementById('rSkipped').textContent = skipped;
+
+  document.getElementById('results').style.display = 'block';
+}
+
+function retryMissed() {
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  mode = 'missed';
+  startQuiz();
+}
+
+function goHome() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('mode-screen').style.display = 'block';
+  if (timerInterval) clearInterval(timerInterval);
+  document.getElementById('timerDisplay').style.display = 'none';
+  document.getElementById('statCurrent').textContent = '–';
+  document.getElementById('statTotal').textContent = '–';
+  document.getElementById('statCorrect').textContent = '0';
+  document.getElementById('statWrong').textContent = '0';
+}
+</script>
+</body>
+</html>
